@@ -2,7 +2,6 @@ package com.example.api.MVVM
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.api.responseclass.ResponseClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,16 +10,15 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DataRepository   {
-    private val responseClassBuffer= MutableLiveData<ResponseClass>()
-    val  userBuffer: LiveData<ResponseClass> get()=responseClassBuffer
- //   private val responseHandler: ResponseHandler = ResponseHandler()
+    private val responseClassBuffer= MutableLiveData<StringBuffer>()
+    val  userBuffer: LiveData<StringBuffer> get()=responseClassBuffer
 
    fun openTheConnection(){
        val stringBuffer= StringBuffer()
        CoroutineScope(Dispatchers.IO).launch {
            var url:URL?=null
            try {
-               url=URL("https://reqres.in/api/users?page=2")
+               url=URL("https://reqres.in/api/users")
                val urlConnection=url.openConnection() as HttpURLConnection
                urlConnection.requestMethod="GET"
 
@@ -41,7 +39,7 @@ class DataRepository   {
                    stringBuffer.append(ch)
                    data=inputStreamReader.read()
                }
-
+            responseClassBuffer.postValue(stringBuffer)
            }catch (e:Exception){
 
                e.printStackTrace()

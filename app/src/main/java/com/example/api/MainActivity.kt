@@ -1,6 +1,7 @@
 package com.example.api
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,12 +11,13 @@ import com.example.api.MVVM.DataViewModelFactory
 import com.example.api.adapter.DataAdapter
 import com.example.api.responseclass.ResponseClass
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var dataViewModel: DataViewModel
-    private lateinit var dataRepository: DataRepository
     lateinit var dataAdapter: DataAdapter
     private var dataList = mutableListOf<ResponseClass>()
 
@@ -28,16 +30,39 @@ class MainActivity : AppCompatActivity() {
         dataViewModel = ViewModelProviders.of(this, viewModelFactory)[DataViewModel::class.java]
 
         dataViewModel.openTheConnection()
-        dataViewModel.user.observe(this){
-         dataList.clear()
-            dataList.addAll(listOf(it))
-            setRecyclerView()
+        dataViewModel.user.observe(this) {
+            Log.d("check",it.toString())
+           buildResponseData(it)
+
         }
     }
 
-    private fun setRecyclerView(){
-        dataAdapter=DataAdapter(dataList)
-        recyclerView.layoutManager=LinearLayoutManager(this)
-        recyclerView.adapter=dataAdapter
+    private fun buildResponseData(stringBuffer: StringBuffer){
+    // build a JSON object from the received string
+
+        val json=stringBuffer.toString()
+        try {
+            val jsonObject=JSONObject(json)
+            val jsonArray=jsonObject.getJSONArray("data")
+            for(i in 0 until  jsonArray.length()){
+                val eachJsonObject=jsonArray.getJSONObject(i)
+                val id=eachJsonObject.getInt("id")
+                val firstName=eachJsonObject.getString("first_name")
+                val lastName=eachJsonObject.getString("last_name")
+                val email=eachJsonObject.getString("email")
+                val image=eachJsonObject.getString("avatar")
+                val responseClass=ResponseClass(id,email,firstName,lastName,image)
+                dataList.add(responseClass)
+            }
+            Log.d("size1", dataList.size.toString())
+            setRecyclerView()
+        }catch (e:JSONException){
+            e.printStackTrace()
+        }
+    }
+    private fun setRecyclerView() {
+        dataAdapter = DataAdapter(dataList)
+        recyclerView.adapter = dataAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 }
