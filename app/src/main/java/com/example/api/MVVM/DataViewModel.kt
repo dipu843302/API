@@ -6,12 +6,19 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DataViewModel(private val dataRepository: DataRepository):ViewModel() {
+class DataViewModel(private val dataRepository: DataRepository) : ViewModel() {
 
-    val user:LiveData<StringBuffer> get() = dataRepository.userBuffer
-    fun openTheConnection(){
-        viewModelScope.launch(Dispatchers.IO ) {
+    val user: LiveData<StringBuffer> get() = dataRepository.userBuffer
+    fun openTheConnection() {
+        viewModelScope.launch(Dispatchers.IO) {
             dataRepository.openTheConnection()
+        }
+    }
+
+    fun postData(Name:String,Job:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            dataRepository.
+            postData(Name,Job)
         }
     }
 
