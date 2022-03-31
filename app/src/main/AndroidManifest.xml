@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.API">
         <activity
+            android:name=".activity.Put"
+            android:exported="false" />
+        <activity
             android:name=".activity.Add"
             android:exported="false" />
         <activity

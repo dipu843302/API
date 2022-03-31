@@ -9,6 +9,7 @@ import com.example.api.MVVM.DataRepository
 import com.example.api.MVVM.DataViewModel
 import com.example.api.MVVM.DataViewModelFactory
 import com.example.api.R
+import com.example.api.adapter.ClickListener
 import com.example.api.adapter.DataAdapter
 import com.example.api.responseclass.ResponseClass
 import kotlinx.android.synthetic.main.activity_list_users.*
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
 
-class ListUsersActivity : AppCompatActivity() {
+class ListUsersActivity : AppCompatActivity() ,ClickListener{
 
     private lateinit var dataViewModel: DataViewModel
     lateinit var dataAdapter: DataAdapter
@@ -61,9 +62,13 @@ class ListUsersActivity : AppCompatActivity() {
     }
 
     private fun setRecyclerView() {
-        dataAdapter = DataAdapter(dataList)
+        dataAdapter = DataAdapter(dataList,this)
         recyclerView.adapter = dataAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    override fun deleteData(id: Int) {
+     dataViewModel.delete(id)
     }
 
 }

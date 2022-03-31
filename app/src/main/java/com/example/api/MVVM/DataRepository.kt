@@ -1,12 +1,8 @@
 package com.example.api.MVVM
 
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.api.activity.PostDetailsActivity
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.InputStreamReader
@@ -52,11 +48,11 @@ class DataRepository {
         }
     }
 
-    fun postData(Name: String, Job:String) {
-        val jsonObject = JSONObject()
+    fun postData(Name: String, Job: String) {
+
         val params = JSONObject()
-        jsonObject.put("name", Name)
-        jsonObject.put("job", Job)
+        params.put("name", Name)
+        params.put("job", Job)
         val paramString = params.toString()
         CoroutineScope(Dispatchers.IO).launch {
             var url: URL? = null
@@ -75,10 +71,83 @@ class DataRepository {
                 val outputStreamWriter = OutputStreamWriter(urlConnection.outputStream)
                 outputStreamWriter.write(paramString)
                 outputStreamWriter.flush()
-                Log.d("check",urlConnection.responseCode.toString())
+                Log.d("post", urlConnection.responseCode.toString())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
+
+    fun loginSuccess(email: String, password: String) {
+
+        val params = JSONObject()
+        params.put("email", email)
+        params.put("password", password)
+        val paramString = params.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            var url: URL? = null
+            try {
+                url = URL("https://reqres.in/api/users")
+                //Open the connection and connect to server
+                val urlConnection = url.openConnection() as HttpURLConnection
+                urlConnection.requestMethod = "POST"
+                urlConnection.setRequestProperty("Content-Type", "application/json")
+                // The format of the content we're sending to the server
+                urlConnection.setRequestProperty("Accept", "application/json")
+                // The format of response we want to get from the server
+                urlConnection.doInput = true
+                urlConnection.doOutput = true
+                // Send the JSON we created
+                val outputStreamWriter = OutputStreamWriter(urlConnection.outputStream)
+                outputStreamWriter.write(paramString)
+                outputStreamWriter.flush()
+                Log.d("post", urlConnection.responseCode.toString())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun put(name: String, job: String) {
+
+        val param = JSONObject()
+        param.put("name", name)
+        param.put("job", job)
+
+        val paramString = param.toString()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val url = URL("https://reqres.in/api/users/2")
+                val urlConnection = url.openConnection() as HttpURLConnection
+                urlConnection.doOutput = true
+                urlConnection.requestMethod = "PUT"
+                urlConnection.setRequestProperty("Content-Type", "application/json")
+                // The format of the content we are sending to the server
+                urlConnection.setRequestProperty("Accept", "application/json")
+                // The format of response we want to get from the server
+
+                urlConnection.doInput = true
+                urlConnection.doOutput = true
+
+                //send the JSON we created
+                val outputStreamWriter = OutputStreamWriter(urlConnection.outputStream)
+                outputStreamWriter.write(paramString)
+                outputStreamWriter.flush()
+                Log.d("put", urlConnection.responseCode.toString())
+            } catch (e: java.lang.Exception) {
+                e.stackTrace
+            }
+        }
+    }
+
+    fun Delete(id: Int) {
+    val url=URL("https://reqres.in/api/users/$id")
+        val httpURLConnection=url.openConnection() as HttpURLConnection
+        httpURLConnection.doOutput=true
+        httpURLConnection.requestMethod="DELETE"
+        httpURLConnection.connect()
+      Log.d("delete",httpURLConnection.responseCode.toString())
+    }
+
 }

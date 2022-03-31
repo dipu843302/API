@@ -21,5 +21,17 @@ class DataViewModel(private val dataRepository: DataRepository) : ViewModel() {
             postData(Name,Job)
         }
     }
+    fun put(Name:String,Job:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            dataRepository.
+            put(Name,Job)
+        }
+    }
+    fun delete(id:Int){
+        viewModelScope.launch (Dispatchers.IO){
+            dataRepository.Delete(id)
+        }
+    }
+
 
 }
